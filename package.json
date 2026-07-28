@@ -1,0 +1,21 @@
+{
+  "name": "smart-telehealth-clinical-patient-management-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OmarAhmed2772004/Smart-Telehealth-Clinical-Patient-Management-Platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/OmarAhmed2772004/Smart-Telehealth-Clinical-Patient-Management-Platform/issues"
+  },
+  "homepage": "https://github.com/OmarAhmed2772004/Smart-Telehealth-Clinical-Patient-Management-Platform#readme"
+}
