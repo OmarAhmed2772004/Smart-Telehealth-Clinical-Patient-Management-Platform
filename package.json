@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/OmarAhmed2772004/Smart-Telehealth-Clinical-Patient-Management-Platform/issues"
   },
-  "homepage": "https://github.com/OmarAhmed2772004/Smart-Telehealth-Clinical-Patient-Management-Platform#readme"
+  "homepage": "https://github.com/OmarAhmed2772004/Smart-Telehealth-Clinical-Patient-Management-Platform#readme",
+  "dependencies": {
+    "mongodb": "^7.5.0",
+    "mongoose": "^9.8.1"
+  }
 }
