@@ -2,7 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dns = require("dns");
 
-const userRoutes = require("./routes/user.route");
+const userRoutes = require("./routes/user.routes");
+const doctorRoutes = require("./routes/doctor.routes");
 
 const index = express();
 
@@ -17,13 +18,14 @@ mongoose.connect(
     .then(() => {
         console.log("Connected to MongoDB");
 
+        index.use("/users", userRoutes);
+        index.use("/doctors", doctorRoutes);
+
         index.listen(3000, () => {
             console.log("Server is running on port 3000");
         });
     })
     .catch((err) => console.log(err));
-
-index.use("/users", userRoutes);
 
 
 
