@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/OmarAhmed2772004/Smart-Telehealth-Clinical-Patient-Management-Platform#readme",
   "dependencies": {
+    "cors": "^2.8.6",
     "mongodb": "^7.5.0",
     "mongoose": "^9.8.1"
   }
