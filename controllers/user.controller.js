@@ -1,9 +1,31 @@
 const User = require("../models/user.model");
+const bcrypt = require("bcrypt");
 
 // Create User
 const createUser = async (req, res) => {
     try {
-        const user = await User.create(req.body);
+        const { fullName, email, password, role } = req.body;
+
+        // Check if email already exists
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Email already exists",
+            });
+        }
+
+        // Hash Password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create User
+        const user = await User.create({
+            fullName,
+            email,
+            password: hashedPassword,
+            role,
+        });
 
         res.status(201).json({
             success: true,
@@ -63,14 +85,10 @@ const getUserById = async (req, res) => {
 // Update User
 const updateUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true,
+        });
 
         if (!user) {
             return res.status(404).json({
@@ -116,10 +134,36 @@ const deleteUser = async (req, res) => {
     }
 };
 
+// Search Users
+const searchUsers = async (req, res) => {
+    try {
+        const { search } = req.query;
+
+        const users = await User.find({
+            $or: [
+                { fullName: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } },
+            ],
+        });
+
+        res.status(200).json({
+            success: true,
+            count: users.length,
+            data: users,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 module.exports = {
     createUser,
     getAllUsers,
     getUserById,
     updateUser,
     deleteUser,
+    searchUsers,
 };
