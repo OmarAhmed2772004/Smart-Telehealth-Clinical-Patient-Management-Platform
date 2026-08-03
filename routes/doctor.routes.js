@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const { body } = require("express-validator");
 
 const {
     createDoctor,
@@ -10,20 +9,24 @@ const {
     deleteDoctor,
 } = require("../controllers/doctor.controller");
 
-const doctorValidation = [
-    body("userId")
-        .notEmpty()
-        .withMessage("userId is required"),
+const {
+    createDoctorValidator,
+    updateDoctorValidator,
+} = require("../middlewares/doctor.validator");
 
-    body("specialization")
-        .notEmpty()
-        .withMessage("specialization is required"),
-];
+// POST   /api/doctors          — Create a new doctor profile
+router.post("/", createDoctorValidator, createDoctor);
 
-router.post("/", doctorValidation, createDoctor);
+// GET    /api/doctors          — Retrieve all doctor profiles
 router.get("/", getAllDoctors);
+
+// GET    /api/doctors/:id      — Retrieve a single doctor profile by ID
 router.get("/:id", getDoctorById);
-router.put("/:id", doctorValidation, updateDoctor);
+
+// PUT    /api/doctors/:id      — Update an existing doctor profile
+router.put("/:id", updateDoctorValidator, updateDoctor);
+
+// DELETE /api/doctors/:id      — Remove a doctor profile
 router.delete("/:id", deleteDoctor);
 
 module.exports = router;
