@@ -7,7 +7,7 @@ const {
     createPatient,
     updatePatient,
     deletePatient
-} = require("../controllers/patientController");
+} = require("../controllers/patient.controller");
 
 router.get("/", getPatients);
 router.get("/:id", getPatientById);
