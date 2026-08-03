@@ -4,6 +4,8 @@ const dns = require("dns");
 
 const userRoutes = require("./routes/user.routes");
 const doctorRoutes = require("./routes/doctor.routes");
+const authRoutes = require("./routes/auth.routes");
+const appointmentRoutes = require("./routes/appointment.routes");
 
 const index = express();
 
@@ -13,7 +15,8 @@ index.use(express.json());
 // 2. Routes
 index.use("/users", userRoutes);
 index.use("/doctors", doctorRoutes);
-
+index.use("/auth", authRoutes);
+index.use("/appointments", appointmentRoutes);
 // 3. DNS
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
@@ -25,8 +28,8 @@ mongoose
     .then(() => {
         console.log("Connected to MongoDB successfully");
 
-        index.listen(3000, () => {
-            console.log("Server is running on port 3000");
+        index.listen(4000, () => {
+            console.log("Server is running on port 4000");
         });
     })
     .catch((err) => console.error("Database connection error:", err));
