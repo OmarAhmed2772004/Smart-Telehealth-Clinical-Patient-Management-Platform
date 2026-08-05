@@ -1,5 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const dns = require("dns");
 
 const userRoutes = require("./routes/user.routes");
@@ -12,6 +14,13 @@ const index = express();
 
 // 1. Middlewares
 index.use(express.json());
+index.use(
+    cors({
+        origin: "http://localhost:4200",
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
 
 // 2. Routes
 index.use("/users", userRoutes);
@@ -24,18 +33,26 @@ index.use("/appointments", appointmentRoutes);
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 // 4. Database Connection & Server
-const MONGO_URI =
-    "mongodb+srv://lujainahmed459_db_user:eSwQu9jFNC9DcuS8@cluster0.whlhfwe.mongodb.net/telehealth?retryWrites=true&w=majority&appName=Cluster0";
-
 mongoose
-    .connect(MONGO_URI)
+    .connect(process.env.MONGO_URI)
     .then(() => {
         console.log("Connected to MongoDB successfully");
 
-        index.listen(4000, () => {
-            console.log("Server is running on port 4000");
+        const PORT = process.env.PORT || 4000;
+        index.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
         });
     })
     .catch((err) => {
         console.error("Database connection error:", err);
     });
+
+// 5. Global Error Handling Middleware (must be last)
+index.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        data: null,
+    });
+});

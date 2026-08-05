@@ -1,1 +1,128 @@
-<p>doctor-list works!</p>
+<div class="min-h-screen bg-slate-900 px-4 py-8">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Doctors</h1>
+        <p class="text-slate-400 text-sm mt-1">Manage all registered doctor profiles</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a routerLink="/doctors/add"
+          class="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all duration-200 shadow-lg shadow-teal-500/20 active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Doctor
+        </a>
+        <button (click)="logout()"
+          class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm px-4 py-2.5 rounded-xl transition-all duration-200 active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Success Banner -->
+    @if (successMessage) {
+      <div class="mb-6 flex items-center gap-3 bg-teal-500/10 border border-teal-500/20 rounded-xl px-4 py-3">
+        <svg class="w-5 h-5 text-teal-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <p class="text-teal-400 text-sm">{{ successMessage }}</p>
+      </div>
+    }
+
+    <!-- Error Banner -->
+    @if (errorMessage) {
+      <div class="mb-6 flex items-center gap-3 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+        <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-red-400 text-sm">{{ errorMessage }}</p>
+      </div>
+    }
+
+    <!-- Loading State -->
+    @if (isLoading) {
+      <div class="flex flex-col items-center justify-center py-24 gap-4">
+        <svg class="animate-spin h-8 w-8 text-teal-400" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <p class="text-slate-400 text-sm">Loading doctors...</p>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!isLoading && doctors.length === 0 && !errorMessage) {
+      <div class="flex flex-col items-center justify-center py-24 gap-4">
+        <div class="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+          <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </div>
+        <p class="text-slate-400 font-medium">No doctors found</p>
+        <p class="text-slate-500 text-sm">Get started by adding the first doctor profile.</p>
+        <a routerLink="/doctors/add"
+          class="mt-2 inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all duration-200">
+          Add Doctor
+        </a>
+      </div>
+    }
+
+    <!-- Doctors Grid -->
+    @if (!isLoading && doctors.length > 0) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (doctor of doctors; track doctor._id) {
+          <div class="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-6 hover:border-teal-500/30 hover:shadow-lg hover:shadow-teal-500/5 transition-all duration-200 group">
+
+            <!-- Avatar + Specialization -->
+            <div class="flex items-start gap-4 mb-4">
+              <div class="w-11 h-11 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-teal-500/20 transition-colors">
+                <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-white font-semibold text-sm truncate">{{ getUserName(doctor) }}</p>
+                <span class="inline-block mt-1 px-2 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium">
+                  {{ doctor.specialization }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Bio -->
+            @if (doctor.bio) {
+              <p class="text-slate-400 text-xs leading-relaxed mb-4 line-clamp-2">{{ doctor.bio }}</p>
+            }
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2 pt-4 border-t border-slate-700/50">
+              <a [routerLink]="['/doctors', doctor._id]"
+                class="flex-1 text-center text-xs font-medium text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 px-3 py-2 rounded-lg transition-all duration-150">
+                View
+              </a>
+              <a [routerLink]="['/doctors', doctor._id]" [queryParams]="{edit: true}"
+                class="flex-1 text-center text-xs font-medium text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-3 py-2 rounded-lg transition-all duration-150">
+                Edit
+              </a>
+              <button (click)="deleteDoctor(doctor._id!)"
+                class="flex-1 text-xs font-medium text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-3 py-2 rounded-lg transition-all duration-150">
+                Delete
+              </button>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

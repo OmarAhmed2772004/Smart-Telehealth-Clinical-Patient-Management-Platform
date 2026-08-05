@@ -11,16 +11,22 @@ const {
     searchUsers,
 } = require("../controllers/user.controller");
 
+// POST   /users            — Public (self-registration)
 router.post("/", createUser);
+
+// GET    /users            — Authenticated
 router.get("/", authMiddleware, getAllUsers);
-router.get("/search", searchUsers);
-router.get("/:id", getUserById);
-router.put("/:id", updateUser);
-router.delete(
-    "/:id",
-    authMiddleware,
-    authorize("admin"),
-    deleteUser
-);
+
+// GET    /users/search     — Authenticated
+router.get("/search", authMiddleware, searchUsers);
+
+// GET    /users/:id        — Authenticated
+router.get("/:id", authMiddleware, getUserById);
+
+// PUT    /users/:id        — Authenticated (own profile or admin)
+router.put("/:id", authMiddleware, updateUser);
+
+// DELETE /users/:id        — Admin only
+router.delete("/:id", authMiddleware, authorize("admin"), deleteUser);
 
 module.exports = router;

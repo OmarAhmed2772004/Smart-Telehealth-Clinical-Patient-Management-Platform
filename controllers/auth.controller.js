@@ -1,9 +1,27 @@
+const { validationResult } = require("express-validator");
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+// ─── Shared validation check ─────────────────────────────────────────────────
+const checkValidation = (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(400).json({
+            success: false,
+            message: errors.array()[0].msg,
+            data: null,
+        });
+        return false;
+    }
+    return true;
+};
+
 // Register
 const register = async (req, res) => {
     try {
+        if (!checkValidation(req, res)) return;
+
         const { fullName, email, password, role } = req.body;
 
         // Check if email exists
@@ -13,6 +31,7 @@ const register = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Email already exists",
+                data: null,
             });
         }
 
@@ -27,16 +46,21 @@ const register = async (req, res) => {
             role,
         });
 
+        // Strip password before sending response
+        const userObj = user.toObject();
+        delete userObj.password;
+
         res.status(201).json({
             success: true,
             message: "User registered successfully",
-            data: user,
+            data: userObj,
         });
 
     } catch (error) {
         res.status(500).json({
             success: false,
             message: error.message,
+            data: null,
         });
     }
 };
@@ -44,6 +68,8 @@ const register = async (req, res) => {
 // Login
 const login = async (req, res) => {
     try {
+        if (!checkValidation(req, res)) return;
+
         const { email, password } = req.body;
 
         // Check if user exists
@@ -53,6 +79,7 @@ const login = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: "Invalid email or password",
+                data: null,
             });
         }
 
@@ -63,6 +90,7 @@ const login = async (req, res) => {
             return res.status(401).json({
                 success: false,
                 message: "Invalid email or password",
+                data: null,
             });
         }
 
@@ -72,7 +100,7 @@ const login = async (req, res) => {
                 id: user._id,
                 role: user.role,
             },
-            "mySecretKey",
+            process.env.JWT_SECRET,
             {
                 expiresIn: "1d",
             }
@@ -81,13 +109,14 @@ const login = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Login successful",
-            token,
+            data: { token },
         });
 
     } catch (error) {
         res.status(500).json({
             success: false,
             message: error.message,
+            data: null,
         });
     }
 };

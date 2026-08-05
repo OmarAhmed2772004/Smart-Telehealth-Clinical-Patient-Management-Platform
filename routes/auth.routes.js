@@ -1,15 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-console.log("Auth Routes Loaded");
-
 const { register, login } = require("../controllers/auth.controller");
+const { registerValidator, loginValidator } = require("../middlewares/auth.validator");
 
-router.get("/test", (req, res) => {
-    res.send("Auth Works");
-});
-
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register", registerValidator, register);
+router.post("/login", loginValidator, login);
 
 module.exports = router;

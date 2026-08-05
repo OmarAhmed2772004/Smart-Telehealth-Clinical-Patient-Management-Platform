@@ -14,19 +14,22 @@ const {
     updateDoctorValidator,
 } = require("../middlewares/doctor.validator");
 
-// POST   /api/doctors          — Create a new doctor profile
-router.post("/", createDoctorValidator, createDoctor);
+const authMiddleware = require("../middlewares/auth.middleware");
+const authorize = require("../middlewares/role.middleware");
 
-// GET    /api/doctors          — Retrieve all doctor profiles
-router.get("/", getAllDoctors);
+// GET    /doctors          — All authenticated users can view
+router.get("/", authMiddleware, getAllDoctors);
 
-// GET    /api/doctors/:id      — Retrieve a single doctor profile by ID
-router.get("/:id", getDoctorById);
+// GET    /doctors/:id      — All authenticated users can view
+router.get("/:id", authMiddleware, getDoctorById);
 
-// PUT    /api/doctors/:id      — Update an existing doctor profile
-router.put("/:id", updateDoctorValidator, updateDoctor);
+// POST   /doctors          — Only Admin or Doctor can create
+router.post("/", authMiddleware, authorize("admin", "doctor"), createDoctorValidator, createDoctor);
 
-// DELETE /api/doctors/:id      — Remove a doctor profile
-router.delete("/:id", deleteDoctor);
+// PUT    /doctors/:id      — Only Admin or Doctor can update
+router.put("/:id", authMiddleware, authorize("admin", "doctor"), updateDoctorValidator, updateDoctor);
+
+// DELETE /doctors/:id      — Only Admin can delete
+router.delete("/:id", authMiddleware, authorize("admin"), deleteDoctor);
 
 module.exports = router;
